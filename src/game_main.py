@@ -6,7 +6,7 @@ import pygame
 import sys 
 
 # create instance of game, pet object
-game = game_classes.Game(500, 800)
+game = game_classes.Game(600, 700)
 cat = game_classes.Pet("Ramsey")
 
 while game.run:

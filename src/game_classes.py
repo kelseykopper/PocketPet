@@ -82,6 +82,17 @@ class Pet:
   def incr_days_lived(self):
     self.daysLived += 1
     
+class Button:
+  def __init__(self, x, y, width, height, label, action):
+    self.x = x
+    self.y = y
+    self.width = width
+    self.height = height 
+    self.label = label 
+    self.action = action 
+
+  # construct button on screen
+
 class Game: 
   """ A class to represent an instance of the game. """
   ENGAGE_END_GAME = 300000 # if player has survived this long, begin end game
