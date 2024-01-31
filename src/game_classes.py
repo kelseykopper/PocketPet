@@ -67,6 +67,7 @@ class Pet:
     self.cleanliness = 0.5
 
     self.pet_stats = Stats(self)
+    game_objects.append(self)
 
   def __str__(self):
     return str(self.pet_stats)
@@ -83,6 +84,11 @@ class Pet:
 
   def incr_days_lived(self):
     self.daysLived += 1
+
+  def process(self, game):
+    """ Update the pet's icon every frame. """
+    icon = pygame.image.load(constant.ICON_HAPPY)
+    game.screen.blit(icon, (0, 0))
     
 class Button:
   """ Class to represent on-screen buttons.
@@ -157,23 +163,5 @@ class Popup:
         text_pos = text.get_rect(left=225)
         game.screen.blit(text, text_pos)
 
-class Game: 
-  """ A class to represent an instance of the game. """
-  def __init__(self):
-    # initialize pygame
-    pygame.init()
-    self.time_elapsed = 0
-
-    self.width = constant.SCREEN_WIDTH 
-    self.height = constant.SCREEN_HEIGHT
-
-     # create game environment
-    self.screen = pygame.display.set_mode((self.width, self.height))
-    self.clock = pygame.time.Clock()
-    self.run = True
-    self.level = 0
-
-    # set window title
-    pygame.display.set_caption("Pocket Pet Simulator")
 
 

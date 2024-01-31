@@ -2,7 +2,7 @@
 MAX_NEED_LEVEL = 1.0
 
 # paths to pet instance icons
-ICON_HAPPY = "img/cat.png"
+ICON_HAPPY = "img/happy.png"
 
 # time before "endgame" should be engaged, in milliseconds
 ENGAGE_END_GAME = 180000 # 3 minutes
