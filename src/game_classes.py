@@ -82,13 +82,16 @@ class Pet:
   def clean(self):
     self.cleanliness = 1.0
 
-  def incr_days_lived(self):
-    self.daysLived += 1
+  def is_alive(self):
+    if self.hunger == 0 or self.thirst == 0 or self.cleanliness == 0: 
+      return False 
+    else:
+      return True 
 
   def process(self, game):
     """ Update the pet's icon every frame. """
-    icon = pygame.image.load(constant.ICON_HAPPY)
-    game.screen.blit(icon, (0, 0))
+    # icon = pygame.image.load(constant.ICON_HAPPY)
+    # game.screen.blit(icon, (0, 0))
     
 class Button:
   """ Class to represent on-screen buttons.
@@ -129,7 +132,7 @@ class Button:
     if self.box.collidepoint(mousePos):
       self.buttonSurface.fill(self.colors['hover'])
 
-      # check if left click
+      # check if left click (1 mouse press = 1 action ONLY)
       if pygame.mouse.get_pressed(num_buttons=3)[0]: 
         if self.onePress:
           self.action()
@@ -147,21 +150,24 @@ class Button:
     game.screen.blit(self.buttonSurface, self.box)
 
 class Popup: 
-  """ Represents any kind of popup in-game message. """
-  def __init__(self, msg, duration):
+  """ Represents any kind of popup in-game message.
+      Duration = duration for message to display on screen, in milliseconds.
+       Defaults to -1 and displays message indefinitely.
+  """
+  def __init__(self, msg, duration=-1):
     self.msg = msg 
     self.duration = duration 
 
-  def display(game, start_time):
-      # TODO: do something like this but make it work. might have to reorder the class
-      current_time = pygame.time.get_ticks() 
+  def display(self, game, start_time=pygame.time.get_ticks()):
+        # TODO: do something like this but make it work. might have to reorder the class
+        current_time = pygame.time.get_ticks() 
 
-      if current_time - start_time < self.duration:
-        # render the name of the stat
-        font = pygame.font.Font(None, 36)
-        text = font.render(msg, True, "white")
-        text_pos = text.get_rect(left=225)
-        game.screen.blit(text, text_pos)
+        if (self.duration == -1) or (current_time - start_time < self.duration):
+          # render the name of the stat
+          font = pygame.font.Font(None, 36)
+          text = font.render(self.msg, True, "white")
+          text_pos = text.get_rect(left=225)
+          game.screen.blit(text, text_pos)
 
 
 
