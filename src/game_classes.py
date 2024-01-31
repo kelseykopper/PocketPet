@@ -2,6 +2,7 @@
 # @Author Kelsey Kopper
 
 import pygame
+import constant
 
 # any object that might be shown on screen, ex. stats display, buttons, pet object, etc
 game_objects = []
@@ -57,9 +58,6 @@ class Stats:
 
 class Pet:
   """ A class representing a pet object. """
-
-  # pet instance icons
-  ICON_HAPPY = "img/cat.png"
   
   def __init__(self, name):
     self.name = name
@@ -74,10 +72,10 @@ class Pet:
     return str(self.pet_stats)
   
   def feed(self):
-    self.hunger += .25
+    if (self.hunger + .25) <= constant.MAX_NEED_LEVEL:
+      self.hunger += .25
 
   def drink(self):
-    # 1 represents 100% "capacity"; 0 = died from thirst
     self.thirst = 1 
   
   def clean(self):
@@ -89,7 +87,7 @@ class Pet:
 class Button:
   """ Class to represent on-screen buttons.
       @author Maxim Maedem, https://thepythoncode.com/article/make-a-button-using-pygame-in-python """
-  def __init__(self, x, y, width, height, label, action):
+  def __init__(self, x, y, width, height, label, action=None):
     self.x = x
     self.y = y
     self.width = width
@@ -97,21 +95,24 @@ class Button:
     self.label = label 
     self.action = action 
 
+    self.alreadyPressed = False 
+    self.onePress = False
+
     # construct button box
     self.buttonSurface = pygame.Surface((self.width, self.height))
     self.box = pygame.Rect(self.x, self.y, self.width, self.height)
 
     # construct text on box
     self.font = pygame.font.Font(None, 36)
-    self.textSurface = self.font.render(label, True, (20, 20, 20))
+    self.textSurface = self.font.render(label, True, "white")
 
     # append to objects list
     game_objects.append(self)
     
-    # colors 
+    # colors of button background
     self.colors = {
-      'normal' : 'white',
-      'hover' : 'black'
+      'normal' : '#1f1f1f',
+      'hover' : '#363636'
     }
 
   def process(self, game):
@@ -124,32 +125,55 @@ class Button:
 
       # check if left click
       if pygame.mouse.get_pressed(num_buttons=3)[0]: 
-        self.action()
+        if self.onePress:
+          self.action()
+        elif not self.alreadyPressed:
+          self.action()
+          self.alreadyPressed = True 
+      else: 
+        self.alreadyPressed = False
 
-    # TODO: change these coordinates
+    # align text to center of button box and display on screen
     self.buttonSurface.blit(self.textSurface, [
       self.box.width/2 - self.textSurface.get_rect().width/2,
       self.box.height/2 - self.textSurface.get_rect().height/2
         ])
     game.screen.blit(self.buttonSurface, self.box)
 
+class Popup: 
+  """ Represents any kind of popup in-game message. """
+  def __init__(self, msg, duration):
+    self.msg = msg 
+    self.duration = duration 
+
+  def display(game, start_time):
+      # TODO: do something like this but make it work. might have to reorder the class
+      current_time = pygame.time.get_ticks() 
+
+      if current_time - start_time < self.duration:
+        # render the name of the stat
+        font = pygame.font.Font(None, 36)
+        text = font.render(msg, True, "white")
+        text_pos = text.get_rect(left=225)
+        game.screen.blit(text, text_pos)
+
 class Game: 
   """ A class to represent an instance of the game. """
-  ENGAGE_END_GAME = 300000 # if player has survived this long, begin end game
-
-
-  def __init__(self, screen_width, screen_height):
+  def __init__(self):
     # initialize pygame
     pygame.init()
     self.time_elapsed = 0
 
-    self.width = screen_width 
-    self.height = screen_height 
+    self.width = constant.SCREEN_WIDTH 
+    self.height = constant.SCREEN_HEIGHT
 
      # create game environment
-    self.screen = pygame.display.set_mode((screen_width, screen_height))
+    self.screen = pygame.display.set_mode((self.width, self.height))
     self.clock = pygame.time.Clock()
     self.run = True
     self.level = 0
+
+    # set window title
+    pygame.display.set_caption("Pocket Pet Simulator")
 
 
