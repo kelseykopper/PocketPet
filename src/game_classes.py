@@ -3,10 +3,14 @@
 
 import pygame
 
+# any object that might be shown on screen, ex. stats display, buttons, pet object, etc
+game_objects = []
+
 class Stats: 
   """ Class to handle representation of Pet stats in-game. """
   def __init__(self, pet_instance):
     self.pet = pet_instance 
+    game_objects.append(self)
 
   def __str__(self):
     stats = self.pet.name + "'s stats:\n"
@@ -17,7 +21,7 @@ class Stats:
 
     return stats
   
-  def display_ingame(self, game):
+  def process(self, game):
     """ Display the pet's stats in game. """
 
     pet_needs = {
@@ -83,6 +87,8 @@ class Pet:
     self.daysLived += 1
     
 class Button:
+  """ Class to represent on-screen buttons.
+      @author Maxim Maedem, https://thepythoncode.com/article/make-a-button-using-pygame-in-python """
   def __init__(self, x, y, width, height, label, action):
     self.x = x
     self.y = y
@@ -91,7 +97,41 @@ class Button:
     self.label = label 
     self.action = action 
 
-  # construct button on screen
+    # construct button box
+    self.buttonSurface = pygame.Surface((self.width, self.height))
+    self.box = pygame.Rect(self.x, self.y, self.width, self.height)
+
+    # construct text on box
+    self.font = pygame.font.Font(None, 36)
+    self.textSurface = self.font.render(label, True, (20, 20, 20))
+
+    # append to objects list
+    game_objects.append(self)
+    
+    # colors 
+    self.colors = {
+      'normal' : 'white',
+      'hover' : 'black'
+    }
+
+  def process(self, game):
+    """ Checks if the button has been pressed and if so, runs action function. """
+    mousePos = pygame.mouse.get_pos()
+    self.buttonSurface.fill(self.colors['normal'])
+
+    if self.box.collidepoint(mousePos):
+      self.buttonSurface.fill(self.colors['hover'])
+
+      # check if left click
+      if pygame.mouse.get_pressed(num_buttons=3)[0]: 
+        self.action()
+
+    # TODO: change these coordinates
+    self.buttonSurface.blit(self.textSurface, [
+      self.box.width/2 - self.textSurface.get_rect().width/2,
+      self.box.height/2 - self.textSurface.get_rect().height/2
+        ])
+    game.screen.blit(self.buttonSurface, self.box)
 
 class Game: 
   """ A class to represent an instance of the game. """

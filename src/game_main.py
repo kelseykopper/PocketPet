@@ -22,6 +22,7 @@ while game.run:
     print("put the end game here") 
   else: 
     # game rendering here
+
     catImage = pygame.image.load(cat.ICON_HAPPY)
 
     # delete later -- tracks time in game in seconds
@@ -32,7 +33,11 @@ while game.run:
     #                           game.height // 3 - catImage.get_height() // 3))
   
     # draw cat's stats on screen
-    cat.pet_stats.display_ingame(game)
+
+    game_classes.Button(30, 30, 400, 100, "feed", cat.feed())
+    
+    for object in game_classes.game_objects: 
+      object.process(game)
 
   font = pygame.font.Font(None, 36)
   text = font.render(str(ingame_time), True, "white")
