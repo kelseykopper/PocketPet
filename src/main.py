@@ -25,14 +25,9 @@ class Game:
     # set window title
     pygame.display.set_caption("Pocket Pet Simulator")
 
-  def death_event(): 
-    """ Run in the event that the pet has died. End game and berate the user. """
-    death_notif = Popup("Your Pocket Pet has died. You are a terrible owner.")
-
   def run(self):
     """ Function for handling actual game framework. """
     start_time = pygame.time.get_ticks()
-    notif = Popup("Hello, world")
 
     while self.is_running: 
 
@@ -47,8 +42,6 @@ class Game:
       # run each object's process function every frame
       for object in game_objects: 
         object.process(self)
-
-      notif.display(self)
 
       # update display 
       pygame.display.flip()
@@ -74,7 +67,8 @@ if __name__ == "__main__":
   }
 
   notifications = {
-    "dead" : "Your Pocket Pet has died. You are a terrible owner."
+    "dead" : "Your Pocket Pet has died. You are a terrible owner.",
+    "overfed" : "Your Pocket Pet is already full."
   }
 
   game.run()

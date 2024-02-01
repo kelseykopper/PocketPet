@@ -52,7 +52,7 @@ class Stats:
       text_height -= 25
 
     # print "days lived" stat outside loop so we don't print a bar with it 
-    text = font.render(f"Days lived: {self.pet.daysLived}", True, "white")
+    text = font.render(f"Days lived: {int(self.pet.daysLived)}", True, "white")
     text_pos = text.get_rect(bottom=text_height)
     game.screen.blit(text, text_pos)
 
@@ -73,23 +73,53 @@ class Pet:
     return str(self.pet_stats)
   
   def feed(self):
-    if (self.hunger + .25) <= constant.MAX_NEED_LEVEL:
-      self.hunger += .25
+    self.hunger += .25
+    if (self.hunger) > constant.MAX_NEED_LEVEL:
+      self.hunger = constant.MAX_NEED_LEVEL
 
   def drink(self):
-    self.thirst = 1 
+    self.thirst = constant.MAX_NEED_LEVEL
   
   def clean(self):
-    self.cleanliness = 1.0
+    self.cleanliness = constant.MAX_NEED_LEVEL
 
   def is_alive(self):
-    if self.hunger == 0 or self.thirst == 0 or self.cleanliness == 0: 
+    """ Pet will die if any one need reaches 0. """
+    if self.hunger <= 0 or self.thirst <= 0 or self.cleanliness <= 0: 
+      print("pet is dead")
       return False 
     else:
+      print("pet is alive")
       return True 
+    
+  def decay_needs(self):
+    """ Needs should decay .01 every frame. """
+    self.cleanliness -= constant.NEED_DECAY_RATE
+    if self.cleanliness < 0:
+        self.cleanliness = 0
+
+    self.hunger -= constant.NEED_DECAY_RATE
+    if self.hunger < 0:
+      self.hunger = 0
+
+    self.thirst -= constant.NEED_DECAY_RATE
+    if self.thirst < 0: 
+      self.thirst = 0
+
+    # also reflect time passing here 
+    self.daysLived += constant.DAY_INCR_RATE
+    
+  def get_mood(self):
+    """ TODO: Return the appropriate pet icon for the pet's mood. """
+    pass
 
   def process(self, game):
     """ Update the pet's icon every frame. """
+    self.decay_needs()
+
+    if not self.is_alive():
+      death_notif = Popup("Your Pocket Pet has died. You are a terrible owner.")
+      death_notif.display(game)
     # icon = pygame.image.load(constant.ICON_HAPPY)
     # game.screen.blit(icon, (0, 0))
     
@@ -158,16 +188,54 @@ class Popup:
     self.msg = msg 
     self.duration = duration 
 
+   # TODO: fix this shit
   def display(self, game, start_time=pygame.time.get_ticks()):
-        # TODO: do something like this but make it work. might have to reorder the class
-        current_time = pygame.time.get_ticks() 
+    """ Display the popup on screen. Start time defaults to time at function call. """
 
-        if (self.duration == -1) or (current_time - start_time < self.duration):
-          # render the name of the stat
-          font = pygame.font.Font(None, 36)
-          text = font.render(self.msg, True, "white")
-          text_pos = text.get_rect(left=225)
-          game.screen.blit(text, text_pos)
+    def word_wrap():
+      """ Helper function to break message up into a list of words """
+       # split the message into words
+      words = self.msg.split(' ')
+      lines = []
+      current_line = ""
+      
+      # Word wrapping logic
+      for word in words:
+          test_line = current_line + word + " "
+          text_width, text_height = font.size(test_line)
+          if text_width <= constant.SCREEN_WIDTH:
+              current_line = test_line
+          else:
+              lines.append(current_line)
+              current_line = word + " "
+      
+      if current_line:
+          lines.append(current_line)
+
+      return lines
+
+    current_time = pygame.time.get_ticks() 
+    lines = word_wrap()
+    text_height = constant.SCREEN_HEIGHT
+    font = pygame.font.Font(None, 36)
+
+    if (self.duration == -1) or (current_time - start_time < self.duration):
+      # Calculate the total height of the text block
+      total_text_height = len(lines) * text_height
+      
+      # Display each line of text
+      y = (constant.SCREEN_HEIGHT - total_text_height) / 2  # Starting y position for centered text
+      for line in lines:
+          text = font.render(line, True, "white")
+          text_width, _ = font.size(line)
+          x = (constant.SCREEN_WIDTH - text_width) / 2  # Center each line
+          game.screen.blit(text, (x, y))
+          y += text_height  # Move to the next line
+
+      font = pygame.font.Font(None, 36)
+      text = font.render(self.msg, True, "white")
+      text_pos = text.get_rect(left=225)
+      game.screen.blit(text, text_pos)
 
 
 
