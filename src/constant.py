@@ -3,9 +3,8 @@ MAX_NEED_LEVEL = 1.0
 
 # paths to pet instance icons
 ICONS = {
-  "happy" : "img/happy.png",
-  "hungry" : "img/hungry.png",
-  "dirty" : "img/dirty.png"
+  "hungry" : "img/cat_hungry.png",
+  "thirsty" : "img/cat_thirsty.png"
 }
 
 # time before "endgame" should be engaged, in milliseconds

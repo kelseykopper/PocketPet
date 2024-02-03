@@ -39,6 +39,17 @@ class Game:
       # fill screen black to wipe away last frame 
       self.screen.fill("black")
 
+      image = pygame.image.load(constant.ICONS["hungry"])
+
+      (image_width, image_height) = image.get_size()
+
+      # Calculate the position for the image to be centered
+      image_x = (self.width - image_width) // 2
+      image_y = (self.height - image_height) // 2
+
+      self.screen.blit(image, (image_x, image_y))
+
+
       # run each object's process function every frame
       for object in game_objects: 
         object.process(self)
@@ -61,9 +72,9 @@ if __name__ == "__main__":
 
   # establish other objects for game 
   need_buttons = {
-    "feed" : Button(0, 0, 200, 40, "Feed", cat.feed),
-    "drink" : Button(0, 40, 200, 40, "Drink", cat.drink),
-    "clean" : Button(0, 80, 200, 40, "Clean litter box", cat.clean)
+    "feed" : Button(0, 0, 600, 50, "Feed", cat.feed),
+    "drink" : Button(0, 50, 600, 50, "Drink", cat.drink),
+    "clean" : Button(0, 100, 600, 50, "Clean litter box", cat.clean)
   }
 
   notifications = {
