@@ -72,9 +72,9 @@ if __name__ == "__main__":
 
   # establish other objects for game 
   need_buttons = {
-    "feed" : Button(0, 0, 600, 50, "Feed", cat.feed),
-    "drink" : Button(0, 50, 600, 50, "Drink", cat.drink),
-    "clean" : Button(0, 100, 600, 50, "Clean litter box", cat.clean)
+    "feed" : Button(0, 0, 600, 40, "Feed", cat.feed),
+    "drink" : Button(0, 40, 600, 40, "Drink", cat.drink),
+    "clean" : Button(0, 80, 600, 40, "Clean litter box", cat.clean)
   }
 
   notifications = {
